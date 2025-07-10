@@ -23,9 +23,10 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 1. Clone the repository  
 2. Ensure Docker is installed  
 3. Run the backend:
-   ```bash
-   docker-compose up --build
-   Access the API: http://localhost:5000/api/weather/description?city=sydney&country=aus
+   Go to this older under Project- src/JbHiFi and run below Command in bash
+     docker-compose up --build
+   API will be ready on this url now - http://localhost:5000/api/weather/description?city=sydney&country=aus
+
 
 🧪 Running Tests
     Run all unit and integration tests:
