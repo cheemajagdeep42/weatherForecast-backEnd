@@ -59,11 +59,9 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 ---
 
 ### 🔐 API Key & Rate Limiting
-- Every request header **must include**:  
-  `X-API-KEY: your-key-value`
-- Each API key is limited to **5 requests per hour**
-- If the limit is exceeded, the response will be:  
-  `429 Too Many Requests`
+  -  Every request header **must include**:  `X-API-KEY: your-key-value`
+  -  Each API key is limited to **5 requests per hour**
+  -  If the limit is exceeded, the response will be:  `429 Too Many Requests`
 
 ---
 ### 🚀 Production Deployment
