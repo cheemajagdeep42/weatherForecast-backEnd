@@ -9,6 +9,9 @@ namespace JbHiFi.Tests.Controllers
     {
         private readonly HttpClient _client;
         private readonly Mock<IWeatherService> _weatherServiceMock;
+        private const string ValidApiKey = "test-key-1";
+        private const string City = "sydney";
+        private const string Country = "au";
 
         public WeatherControllerTests(CustomWebApplicationFactory factory)
         {
@@ -26,7 +29,7 @@ namespace JbHiFi.Tests.Controllers
 
                     services.AddSingleton<IWeatherService>(_weatherServiceMock.Object);
 
-                    // Replace RateLimitTracker with a no-op mock to disable rate limiting in tests
+                    // Disable rate limiting in tests
                     var rateLimitDescriptor = services.SingleOrDefault(
                         d => d.ServiceType == typeof(IRateLimitTracker));
                     if (rateLimitDescriptor != null)
@@ -46,12 +49,12 @@ namespace JbHiFi.Tests.Controllers
         public async Task Returns200_WhenCityAndCountryAreValid()
         {
             _weatherServiceMock
-                .Setup(s => s.GetWeatherDescriptionAsync("sydney", "au"))
+                .Setup(s => s.GetWeatherDescriptionAsync(City, Country))
                 .ReturnsAsync("clear sky");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "/api/weather/description?city=sydney&country=au");
-            request.Headers.Add("X-API-KEY", "test-api-key");
+                $"/api/weather/description?city={City}&country={Country}");
+            request.Headers.Add("X-API-KEY", ValidApiKey);
 
             var response = await _client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
@@ -61,15 +64,15 @@ namespace JbHiFi.Tests.Controllers
         }
 
         [Theory]
-        [InlineData("", "au")]
-        [InlineData("sydney", "")]
+        [InlineData("", Country)]
+        [InlineData(City, "")]
         [InlineData("", "")]
         public async Task Returns400_WhenCityOrCountryMissing(string city, string country)
         {
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/api/weather/description?city={city}&country={country}");
-            request.Headers.Add("X-API-KEY", "test-api-key");
+            request.Headers.Add("X-API-KEY", ValidApiKey);
 
             var response = await _client.SendAsync(request);
 
@@ -85,7 +88,7 @@ namespace JbHiFi.Tests.Controllers
 
             var request = new HttpRequestMessage(HttpMethod.Get,
                 "/api/weather/description?city=nowhere&country=xx");
-            request.Headers.Add("X-API-KEY", "test-api-key");
+            request.Headers.Add("X-API-KEY", ValidApiKey);
 
             var response = await _client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
@@ -98,12 +101,12 @@ namespace JbHiFi.Tests.Controllers
         public async Task Returns503_WhenHttpRequestFails()
         {
             _weatherServiceMock
-                .Setup(s => s.GetWeatherDescriptionAsync("sydney", "au"))
+                .Setup(s => s.GetWeatherDescriptionAsync(City, Country))
                 .ThrowsAsync(new HttpRequestException("Network issue"));
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "/api/weather/description?city=sydney&country=au");
-            request.Headers.Add("X-API-KEY", "test-api-key");
+                $"/api/weather/description?city={City}&country={Country}");
+            request.Headers.Add("X-API-KEY", ValidApiKey);
 
             var response = await _client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
@@ -116,12 +119,12 @@ namespace JbHiFi.Tests.Controllers
         public async Task Returns500_WhenUnexpectedExceptionOccurs()
         {
             _weatherServiceMock
-                .Setup(s => s.GetWeatherDescriptionAsync("sydney", "au"))
+                .Setup(s => s.GetWeatherDescriptionAsync(City, Country))
                 .ThrowsAsync(new Exception("Boom"));
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "/api/weather/description?city=sydney&country=au");
-            request.Headers.Add("X-API-KEY", "test-api-key");
+                $"/api/weather/description?city={City}&country={Country}");
+            request.Headers.Add("X-API-KEY", ValidApiKey);
 
             var response = await _client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();

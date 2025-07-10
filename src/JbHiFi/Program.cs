@@ -2,33 +2,39 @@ using JbHiFi.Interfaces;
 using JbHiFi.Settings;
 using JbHiFi.Services;
 using Microsoft.OpenApi.Models;
+using Amazon.SimpleSystemsManagement;
+using JbHiFi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 builder.Services.AddSingleton<IRateLimitTracker, InMemoryRateLimitTracker>();
+builder.Services.Configure<ApiKeySettings>(builder.Configuration.GetSection("ApiKeySettings"));
+builder.Services.Configure<OpenWeatherKeySettings>(builder.Configuration.GetSection("OpenWeatherApi"));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Add AWS services
+builder.Services.AddAWSService<IAmazonSimpleSystemsManagement>();
+
+// Register AwsParameterService + Lazy wrapper
+builder.Services.AddSingleton<AwsParameterService>();
+builder.Services.AddSingleton(provider => new Lazy<AwsParameterService>(
+    () => provider.GetRequiredService<AwsParameterService>()
+));
+
+// Register the SecretKeyProvider
+builder.Services.AddSingleton<ISecretKeyProvider, SecretKeyProvider>();
+
+// Add Swagger
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "JB Hi-Fi Weather API", Version = "v1" });
-
-    // Register the custom header filter
     c.OperationFilter<AddApiKeyHeaderOperationFilter>();
 });
 
-builder.Services.Configure<ApiKeySettings>(
-    builder.Configuration.GetSection("ApiKeySettings"));
-
-builder.Services.Configure<OpenWeatherMapSettings>(
-    builder.Configuration.GetSection("OpenWeatherMap"));
-
-
-// Allow CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -39,25 +45,26 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 var app = builder.Build();
+
 app.UseCors("AllowFrontend");
 
+app.UseRouting();
 
-// Configure the HTTP request pipeline.
+// Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<JbHiFi.Middlewares.ApiKeyRateLimitingMiddleware>();
-
-//app.UseHttpsRedirection();
+// Apply API Key Middleware
+app.UseMiddleware<ApiKeyRateLimitingMiddleware>();
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
+
+// Allow WebApplicationFactory to access Program in integration tests
 public partial class Program { }

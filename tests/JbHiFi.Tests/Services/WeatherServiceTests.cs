@@ -1,11 +1,13 @@
 ﻿using System.Net;
 using JbHiFi.Exceptions;
+using JbHiFi.Interfaces;
 using JbHiFi.Services;
 using JbHiFi.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
+using Xunit;
 
 namespace JbHiFi.Tests.Services
 {
@@ -31,42 +33,42 @@ namespace JbHiFi.Tests.Services
                 BaseAddress = new Uri("https://api.openweathermap.org")
             };
 
-            var options = Options.Create(new OpenWeatherMapSettings
+            var options = Options.Create(new OpenWeatherKeySettings
             {
-                ApiKey = "test-key"
+                BaseUrl = "https://api.openweathermap.org/data/2.5"
             });
 
             var loggerMock = new Mock<ILogger<WeatherService>>();
 
-            return new WeatherService(httpClient, options, loggerMock.Object);
+            // ✅ Now mock the interface
+            var secretKeyProviderMock = new Mock<ISecretKeyProvider>();
+            secretKeyProviderMock
+                .Setup(p => p.GetOpenWeatherApiKeyAsync())
+                .ReturnsAsync("test-api-key");
+
+            return new WeatherService(httpClient, options, loggerMock.Object, secretKeyProviderMock.Object);
         }
 
         [Fact]
         public async Task GetWeatherDescriptionAsync_ReturnsDescription_WhenValidResponse()
         {
-            // Arrange
             var json = @"{
                 ""weather"": [ { ""description"": ""clear sky"" } ],
                 ""cod"": ""200""
             }";
 
             var service = CreateService(json, HttpStatusCode.OK);
-
-            // Act
             var result = await service.GetWeatherDescriptionAsync("sydney", "au");
 
-            // Assert
             Assert.Equal("clear sky", result);
         }
 
         [Fact]
         public async Task GetWeatherDescriptionAsync_ThrowsException_WhenDescriptionMissing()
         {
-            // Arrange
             var json = @"{ ""cod"": ""200"" }";
             var service = CreateService(json, HttpStatusCode.OK);
 
-            // Act & Assert
             var ex = await Assert.ThrowsAsync<Exception>(() =>
                 service.GetWeatherDescriptionAsync("sydney", "au"));
             Assert.Contains("Weather description is missing", ex.Message);
@@ -75,11 +77,9 @@ namespace JbHiFi.Tests.Services
         [Fact]
         public async Task GetWeatherDescriptionAsync_ThrowsLocationNotFoundException_OnApiError()
         {
-            // Arrange
             var json = @"{ ""cod"": ""404"", ""message"": ""city not found"" }";
             var service = CreateService(json, HttpStatusCode.OK);
 
-            // Act & Assert
             var ex = await Assert.ThrowsAsync<LocationNotFoundException>(() =>
                 service.GetWeatherDescriptionAsync("sydney", "au"));
             Assert.Contains("city not found", ex.Message);
