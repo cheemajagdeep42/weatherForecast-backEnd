@@ -26,12 +26,6 @@ namespace JbHiFi.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
 
-            if (!context.Request.Path.StartsWithSegments("/api/weather/description", StringComparison.OrdinalIgnoreCase))
-            {
-                await _next(context);
-                return;
-            }
-
             var apiKey = context.Request.Headers["X-API-KEY"].FirstOrDefault();
 
             if (string.IsNullOrWhiteSpace(apiKey))
