@@ -35,11 +35,20 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 ### ⚙️ Environment Variables
      This app requires:
       🔑  ValidKeys – Used to authenticate incoming requests
-             Development: appsettings.Development.json
-             Production: AWS SSM Parameter Store
-     🌐 OPENWEATHER_API_KEY – Used to call OpenWeatherMap API
+             For Development Env: kept under - appsettings.Development.json
+             For Production Env: Stored Securely(Encrypted) under AWS SSM Parameter Store
+     🌐 OPENWEATHER_API_KEY – Secure Key required to call the 3rd part API(OpenWeatherMap API)
           Stored securely in AWS SSM
           For local testing, can be overridden in appSettings.Development.json
+---
+
+### 🚨 Super Important: Application will not work on Local Without This Configuration!
+       This Application calls 3rd party API which needs security Key (OPENWEATHER_API_KEY). This key may not be accessible on your local from AWS.
+       So for local testing, we need below Configuration manually: 
+       ```
+         👉 Open: appsettings.Development.json  
+         🔑 Set: "OPENWEATHER_API_KEY": "your-valid-openweather-api-key"
+       ---
 ---
 
 ### 📄 Swagger – API Documentation
