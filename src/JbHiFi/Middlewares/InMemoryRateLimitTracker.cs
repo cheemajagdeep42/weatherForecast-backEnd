@@ -15,7 +15,7 @@ namespace JbHiFi.Services
             var cacheKey = GetCacheKey(apiKey);
             if (_cache.TryGetValue<RateLimitEntry>(cacheKey, out var entry))
             {
-                return entry.Count >= LIMIT;
+                return entry?.Count >= LIMIT;  
             }
 
             return false;
@@ -27,8 +27,11 @@ namespace JbHiFi.Services
 
             if (_cache.TryGetValue<RateLimitEntry>(cacheKey, out var entry))
             {
-                entry.Count++;
-                _cache.Set(cacheKey, entry, TIME_WINDOW);
+                if (entry != null)
+                {
+                    entry.Count++;
+                    _cache.Set(cacheKey, entry, TIME_WINDOW);
+                }
             }
             else
             {

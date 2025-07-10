@@ -6,7 +6,7 @@ namespace JbHiFi.Models
     public class WeatherResponseModel
     {
         [JsonConverter(typeof(StringOrIntConverter))]
-        public string Cod { get; set; }
+        public string? Cod { get; set; }
         public string? Message { get; set; }
         public List<WeatherItem>? Weather { get; set; }
     }
@@ -15,10 +15,10 @@ namespace JbHiFi.Models
     {
         public int Id { get; set; }
 
-        public string Main { get; set; }
+        public string? Main { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
     }
 }
