@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using Xunit;
 
 namespace JbHiFi.Tests.Middlewares
@@ -7,7 +6,11 @@ namespace JbHiFi.Tests.Middlewares
     public class ApiKeyRateLimitingMiddlewareTests : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
-        private const string ValidApiKey = "test-api-key";
+        private const string ValidApiKey = "test-key-1";
+        private const string InvalidApiKey = "invalid-key";
+
+        private const string WeatherEndpoint = "/weather?q=sydney,au";
+        private const string WeatherDescriptionEndpoint = "/api/weather/description?city=sydney&country=au";
 
         public ApiKeyRateLimitingMiddlewareTests(CustomWebApplicationFactory factory)
         {
@@ -17,19 +20,17 @@ namespace JbHiFi.Tests.Middlewares
         [Fact]
         public async Task Returns400_WhenApiKeyIsMissing()
         {
-            var response = await _client.GetAsync("/weather?q=sydney,au");
-
+            var response = await _client.GetAsync(WeatherEndpoint);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
         public async Task Returns401_WhenApiKeyIsInvalid()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/weather?q=sydney,au");
-            request.Headers.Add("X-API-KEY", "invalid-key");
+            var request = new HttpRequestMessage(HttpMethod.Get, WeatherEndpoint);
+            request.Headers.Add("X-API-KEY", InvalidApiKey);
 
             var response = await _client.SendAsync(request);
-
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
@@ -38,16 +39,15 @@ namespace JbHiFi.Tests.Middlewares
         {
             for (int i = 0; i < 5; i++)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "api/weather/description?city=sydney&country=au");
+                var request = new HttpRequestMessage(HttpMethod.Get, WeatherDescriptionEndpoint);
                 request.Headers.Add("X-API-KEY", ValidApiKey);
-
 
                 var response = await _client.SendAsync(request);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
 
             // Sixth request should be rejected
-            var finalRequest = new HttpRequestMessage(HttpMethod.Get, "/weather?q=sydney,au");
+            var finalRequest = new HttpRequestMessage(HttpMethod.Get, WeatherEndpoint);
             finalRequest.Headers.Add("X-API-KEY", ValidApiKey);
 
             var finalResponse = await _client.SendAsync(finalRequest);
