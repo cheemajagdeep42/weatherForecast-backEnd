@@ -52,12 +52,14 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
      Each key is limited to 5 requests/hour
      If limit is exceeded, response will be: 429 Too Many Requests
 
-🚀 Production Deployment
-    Hosted on AWS App Runner
-    Docker image from Amazon ECR
-    CI/CD via GitHub Actions
-    Secrets managed via AWS Parameter Store
-    Custom domain: https://api.weatherreportinfo.com
+---
+### 🚀 Production Deployment
+- Hosted on **AWS**
+- Docker image from **Amazon ECR**
+- CI/CD via **GitHub Actions**
+- Secrets managed via **AWS Parameter Store**
+- Custom domain: [https://api.weatherreportinfo.com](https://api.weatherreportinfo.com)
+---
 
 
 
