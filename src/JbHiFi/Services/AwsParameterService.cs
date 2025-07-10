@@ -1,5 +1,6 @@
 ﻿using Amazon.SimpleSystemsManagement.Model;
 using Amazon.SimpleSystemsManagement;
+using System.Text.Json;
 
 namespace JbHiFi.Services
 {
@@ -23,9 +24,8 @@ namespace JbHiFi.Services
             var response = await _ssm.GetParameterAsync(request);
             var raw = response.Parameter?.Value;
 
-            return raw?.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                       .Select(x => x.Trim())
-                       .ToList() ?? new List<string>();
+            return JsonSerializer.Deserialize<List<string>>(raw ?? "[]") ?? new List<string>();
+
         }
     }
 }
