@@ -1,63 +1,57 @@
-# WeatherForecast Back-End API
+🌦️ WeatherForecast Back-End API
+    This is the Back-End service for the Weather Forecast App, built using ASP.NET Core (.NET 8).
+    It powers real-time weather data by connecting to OpenWeatherMap and includes:
+      API key validation
+      Rate limiting (5 requests/hour)
+      Dockerized setup
+      Unit + integration testing
+      Swagger API documentation
+      Features
+      API Key validation via custom middleware
+      Per-key rate limiting (5 requests/hour)
+      Fetch weather descriptions from OpenWeatherMap
+      Unit + integration tests using xUnit
+      Dockerized for local development
+      Swagger support for API docs
 
-This is the **back-end service** for the Weather Forecast application, implemented using **ASP.NET Core (.NET 8)**.  
-It provides weather data by calling the OpenWeatherMap API, with features like **rate limiting**, **API key validation**, and **unit/integration tests**.
 
----
 
-## Features
+🛠️ Getting Started (Local Development)
+    Clone the repository
+    Ensure Docker is installed
+    Run the backend: docker-compose up --build
+    Access the API at: http://localhost:5000/api/weather/description?city=sydney&country=aus
 
-- API Key validation using middleware
-- Rate limiting (per API key)
-- Fetch weather data from OpenWeatherMap API
-- Unit and integration tests using xUnit
-- Dockerized setup for deployment
-- Swagger/OpenAPI support
 
----
 
-## Testing
+🧪 Running Tests
+    Run all unit and integration tests with:
+    dotnet test
 
-- Run all tests:
-  ```bash
-  dotnet test
-  ```
 
----
+⚙️ Environment Variables
+    This app requires:
+    🔑 ValidKeys- Used to authenticate incoming requests
+        Defined in:
+          Development: appsettings.Development.json
+          Production: AWS SSM Parameter Store
 
-## ⚙️ Configuration
+   🌐 OPENWEATHER_API_KEY- Used to call OpenWeatherMap API
+       Stored securely in AWS SSM (For local testing- can be overriden using appSettings.Development.json file)
 
-### Required Environment Variables (can be set in AWS / CI / secrets)
+   📄 Swagger - API Documentation
+        Swagger UI is enabled for exploring and testing APIs.
+        Visit: http://localhost:5000/swagger
 
-| Name                  | Description                          |
-|-----------------------|--------------------------------------|
-| `OPENWEATHER_API_KEY` | Your OpenWeatherMap API key          |
 
-> You can add these in your `.env` (for local) or in Vercel/AWS as environment variables.
 
----
-
-## 🐳 Docker Usage
-
-```bash
-docker-compose up --build
-The API will be available at: http://localhost:5000/api/weather
-```
-
----
-
-## Deployment
-
-This back-end can be deployed via:
-- AWS EC2 / ECS
-- GitHub Actions CI/CD
-- Connected to Vercel front-end via env var `NEXT_PUBLIC_API_BASE_URL`
-
----
-
-## Notes
-
-- This repo is for educational/demo use
-- To test rate limiting, avoid caching on frontend
-
----
+Production Deployment:
+  Hosted on AWS App Runner
+  Docker image from Amazon ECR
+  CI/CD via GitHub Actions
+  Secrets via AWS Parameter Store
+  Custom domain: https://api.weatherreportinfo.com
+  API Key & Rate Limiting
+  Every request Header must include: X-API-KEY: 'key-value-here'
+  Each key is limited to 5 requests/hour
+  Exceeding limit returns: 429 Too Many Requests
