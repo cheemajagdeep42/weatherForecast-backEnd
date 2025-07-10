@@ -1,5 +1,6 @@
 # 🌦️ WeatherForecast Back-End API
 
+---
 This is the Back-End service for the Weather Forecast App, built using **ASP.NET Core (.NET 8)**.  
 It powers real-time weather data by connecting to **OpenWeatherMap** and includes:
 - 🔐 API key validation  
@@ -7,7 +8,7 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 - 🐳 Dockerized setup  
 - ✅ Unit + integration testing  
 - 📄 Swagger API documentation  
-
+---
 
 ### Features
 - API Key validation via custom middleware  
@@ -16,7 +17,6 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 - Unit + integration tests using xUnit  
 - Dockerized for local development  
 - Swagger support for API docs  
-
 ---
 
 ## 🛠️ Getting Started (Local Development)
@@ -27,12 +27,11 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
      docker-compose up --build
    API will be ready on this url now - http://localhost:5000/api/weather/description?city=sydney&country=aus
 
-
-🧪 Running Tests
+### Running Tests on Local
     Run all unit and integration tests:
     dotnet test
-
 ---
+
 ### ⚙️ Environment Variables
      This app requires:
       🔑  ValidKeys – Used to authenticate incoming requests
@@ -43,15 +42,11 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
           For local testing, can be overridden in appSettings.Development.json
 ---
 
-
----
 ### 📄 Swagger – API Documentation
         Swagger UI is enabled for exploring and testing APIs.
         Visit: http://localhost:5000/swagger
 ---
 
-
----
 ### 🔐 API Key & Rate Limiting
 - Every request header **must include**:  
   `X-API-KEY: your-key-value`
