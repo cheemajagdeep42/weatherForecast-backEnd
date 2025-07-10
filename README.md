@@ -55,7 +55,7 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 ---
 
 ### **Swagger – API Documentation**  
-    Swagger UI is enabled for exploring and testing APIs. Visit: [http://localhost:5000/swagger](http://localhost:5000/swagger)
+    Swagger UI is enabled for exploring and testing APIs. Visit: http://localhost:5000/swagger
 ---
 
 ### 🔐 API Key & Rate Limiting
