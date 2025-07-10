@@ -32,25 +32,37 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
     Run all unit and integration tests:
     dotnet test
 
-⚙️ Environment Variables
-    This app requires:
-   🔑  ValidKeys – Used to authenticate incoming requests
-        Development: appsettings.Development.json
-        Production: AWS SSM Parameter Store
+---
+### ⚙️ Environment Variables
+       This app requires:
+        🔑  ValidKeys – Used to authenticate incoming requests
+             Development: appsettings.Development.json
+             Production: AWS SSM Parameter Store
+---
 
-🌐 OPENWEATHER_API_KEY – Used to call OpenWeatherMap API
+
+---
+### 🌐 OPENWEATHER_API_KEY – Used to call OpenWeatherMap API
     Stored securely in AWS SSM
     For local testing, can be overridden in appSettings.Development.json
+---
 
-📄 Swagger – API Documentation
+
+---
+###📄 Swagger – API Documentation
      Swagger UI is enabled for exploring and testing APIs.
      Visit: http://localhost:5000/swagger
+---
 
-🔐 API Key & Rate Limiting
-     Every request header must include:
-     X-API-KEY: your-key-value
-     Each key is limited to 5 requests/hour
-     If limit is exceeded, response will be: 429 Too Many Requests
+
+---
+### 🔐 API Key & Rate Limiting
+- Every request header **must include**:  
+  `X-API-KEY: your-key-value`
+- Each API key is limited to **5 requests per hour**
+- If the limit is exceeded, the response will be:  
+  `429 Too Many Requests`
+---
 
 ---
 ### 🚀 Production Deployment
