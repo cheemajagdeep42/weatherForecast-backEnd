@@ -34,24 +34,20 @@ It powers real-time weather data by connecting to **OpenWeatherMap** and include
 
 ---
 ### ⚙️ Environment Variables
-       This app requires:
-        🔑  ValidKeys – Used to authenticate incoming requests
+     This app requires:
+      🔑  ValidKeys – Used to authenticate incoming requests
              Development: appsettings.Development.json
              Production: AWS SSM Parameter Store
+     🌐 OPENWEATHER_API_KEY – Used to call OpenWeatherMap API
+          Stored securely in AWS SSM
+          For local testing, can be overridden in appSettings.Development.json
 ---
 
 
 ---
-### 🌐 OPENWEATHER_API_KEY – Used to call OpenWeatherMap API
-    Stored securely in AWS SSM
-    For local testing, can be overridden in appSettings.Development.json
----
-
-
----
-###📄 Swagger – API Documentation
-     Swagger UI is enabled for exploring and testing APIs.
-     Visit: http://localhost:5000/swagger
+### 📄 Swagger – API Documentation
+        Swagger UI is enabled for exploring and testing APIs.
+        Visit: http://localhost:5000/swagger
 ---
 
 
