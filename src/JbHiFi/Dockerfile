@@ -2,10 +2,8 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
-EXPOSE 80
-
+EXPOSE 5000
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -26,5 +24,7 @@ RUN dotnet publish "./JbHiFi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Set the port and start the app
+ENV ASPNETCORE_URLS=http://+:5000
 ENTRYPOINT ["dotnet", "JbHiFi.dll"]
-ENV ASPNETCORE_URLS=http://+:80
